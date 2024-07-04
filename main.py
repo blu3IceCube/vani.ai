@@ -16,7 +16,7 @@ class AudioRecorder:
 
         self.is_recording = False
         self.frames = []
-        self.sample_rate = 44100
+        self.sample_rate = 16000
 
     def toggle_recording(self):
         if not self.is_recording:
@@ -47,14 +47,15 @@ class AudioRecorder:
         wavfile.write("audio.wav", self.sample_rate, audio_data)
         
         # Convert wav to mp3 using ffmpeg
-        os.system("ffmpeg -i audio.wav -acodec libmp3lame -b:a 128k audio.mp3")
-        os.remove("audio.wav")  # Remove the temporary wav file
+        # os.system("ffmpeg -i audio.wav -acodec libmp3lame -b:a 128k audio.mp3")
+        # os.remove("audio.wav")  # Remove the temporary wav file
         
         self.transcribe_audio()
 
     def transcribe_audio(self):
+        print("Transcribing audio...")
         model = WhisperModel("large-v3", device="cpu", compute_type="int8")
-        segments, info = model.transcribe("audio.mp3", beam_size=5)
+        segments, info = model.transcribe("audio.wav", beam_size=5)
 
         print("Detected language '%s' with probability %f" % (info.language, info.language_probability))
 
